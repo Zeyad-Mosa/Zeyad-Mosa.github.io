@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Financial Transactions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        select, input[type="number"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between; /* Ensure space between buttons */
+        }
+
+        .button-container button {
+            flex: 1; /* Equal width for both buttons */
+            margin-right: 10px; /* Small margin between buttons */
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .button-container button:nth-child(1) {
+            background: linear-gradient(135deg, #ff4970, #ffa3a8); /* Gradient color 1 */
+        }
+
+        .button-container button:nth-child(2) {
+            background: linear-gradient(135deg, #ffa3a8, #ff4970); /* Gradient color 2 */
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #f8f8f8;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            select, input[type="number"], button {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Medical Financial Transactions</h1>
+        <form id="transactionForm">
+            <label for="itemType">Item Type:</label>
+            <select id="itemType">
+                <option value="cotton" data-price="1.50">Cotton</option>
+                <option value="masks" data-price="0.50">Masks</option>
+                <option value="gloves" data-price="0.75">Gloves</option>
+                <!-- Add more items as needed -->
+            </select>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" min="1" required>
+
+            <div class="button-container">
+                <button type="button" onclick="addTransaction()">Submit</button>
+                <button type="button" onclick="createNewSheet()">Add New Transactions</button>
+            </div>
+        </form>
+
+        <table id="transactionTable">
+            <thead>
+                <tr>
+                    <th>Item Type</th>
+                    <th>Quantity</th>
+                    <th>Total Cost</th>
+                </tr>
+            </thead>
+
+        </table>
+    </div>
+
+    <script>
+        // Function to add transactions to current sheet
+        function addTransaction() {
+            const itemTypeSelect = document.getElementById('itemType');
+            const selectedItem = itemTypeSelect.options[itemTypeSelect.selectedIndex];
+            const itemType = selectedItem.value;
+            const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const totalCost = itemPrice * quantity;
+
+            const table = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+
+            cell1.textContent = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+            cell2.textContent = quantity;
+            cell3.textContent = totalCost.toFixed(2);
+
+            document.getElementById('transactionForm').reset();
+
+            const tableData = [];
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const rowData = {
+                    itemType: cells[0].textContent,
+                    quantity: parseInt(cells[1].textContent),
+                    totalCost: parseFloat(cells[2].textContent)
+                };
+                tableData.push(rowData);
+            }
+
+            fetch('/add-transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tableData)
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to create new sheet and add transactions
+        function createNewSheet() {
+            const itemTypeSelect = document.getElementById('itemType');
+            const selectedItem = itemTypeSelect.options[itemTypeSelect.selectedIndex];
+            const itemType = selectedItem.value;
+            const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const totalCost = itemPrice * quantity;
+
+            const table = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+
+            cell1.textContent = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+            cell2.textContent = quantity;
+            cell3.textContent = totalCost.toFixed(2);
+
+            document.getElementById('transactionForm').reset();
+
+            const tableData = [];
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const rowData = {
+                    itemType: cells[0].textContent,
+                    quantity: parseInt(cells[1].textContent),
+                    totalCost: parseFloat(cells[2].textContent)
+                };
+                tableData.push(rowData);
+            }
+
+            fetch('/create-new-sheet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tableData)
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
