@@ -125,7 +125,6 @@
 
             <div class="button-container">
                 <button type="button" onclick="addTransaction()">Submit</button>
-                <button type="button" onclick="createNewSheet()">Add New Transactions</button>
             </div>
         </form>
 
@@ -137,12 +136,13 @@
                     <th>Total Cost</th>
                 </tr>
             </thead>
-
+            <tbody>
+                <!-- Existing or dynamically added rows will go here -->
+            </tbody>
         </table>
     </div>
 
     <script>
-        // Function to add transactions to current sheet
         function addTransaction() {
             const itemTypeSelect = document.getElementById('itemType');
             const selectedItem = itemTypeSelect.options[itemTypeSelect.selectedIndex];
@@ -166,7 +166,7 @@
 
             const tableData = [];
             const rows = table.getElementsByTagName('tr');
-            for (let i = 1; i < rows.length; i++) {
+            for (let i = 0; i < rows.length; i++) {
                 const cells = rows[i].getElementsByTagName('td');
                 const rowData = {
                     itemType: cells[0].textContent,
@@ -191,82 +191,6 @@
                 console.error('Error:', error);
             });
         }
-
-        // Function to create new sheet and add transactions
-        function createNewSheet() {
-            const itemTypeSelect = document.getElementById('itemType');
-            const selectedItem = itemTypeSelect.options[itemTypeSelect.selectedIndex];
-            const itemType = selectedItem.value;
-            const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
-            const quantity = parseInt(document.getElementById('quantity').value);
-            const totalCost = itemPrice * quantity;
-
-            const table = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow();
-
-            const cell1 = newRow.insertCell(0);
-            const cell2 = newRow.insertCell(1);
-            const cell3 = newRow.insertCell(2);
-
-            cell1.textContent = itemType.charAt(0).toUpperCase() + itemType.slice(1);
-            cell2.textContent = quantity;
-            cell3.textContent = totalCost.toFixed(2);
-
-            document.getElementById('transactionForm').reset();
-
-            const tableData = [];
-            const rows = table.getElementsByTagName('tr');
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                const rowData = {
-                    itemType: cells[0].textContent,
-                    quantity: parseInt(cells[1].textContent),
-                    totalCost: parseFloat(cells[2].textContent)
-                };
-                tableData.push(rowData);
-            }
-
-            fetch('/create-new-sheet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(tableData)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
