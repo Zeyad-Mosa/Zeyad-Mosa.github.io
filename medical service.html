@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Financial Transactions</title>
+    <title>المعاملات المالية الطبية</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Amiri', serif;
+            background-color: #c8d8fa;
             margin: 0;
             padding: 0;
+            direction: rtl;
+            text-align: right;
         }
 
         .container {
@@ -18,11 +22,13 @@
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #092869;
+            font-size: 2em;
         }
 
         form {
@@ -34,6 +40,7 @@
         label {
             margin-bottom: 5px;
             color: #555;
+            font-size: 1.1em;
         }
 
         select, input[type="number"] {
@@ -41,31 +48,35 @@
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 1.1em;
         }
 
         .button-container {
             display: flex;
-            justify-content: space-between; /* Ensure space between buttons */
+            justify-content: space-between;
         }
 
         .button-container button {
-            flex: 1; /* Equal width for both buttons */
-            margin-right: 10px; /* Small margin between buttons */
+            flex: 1;
+            margin-left: 10px;
             padding: 10px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 1.1em;
             color: white;
             cursor: pointer;
         }
 
+        .button-container button:first-child {
+            margin-left: 0;
+        }
+
         .button-container button:nth-child(1) {
-            background: linear-gradient(135deg, #ff4970, #ffa3a8); /* Gradient color 1 */
+            background: linear-gradient(135deg, #092869, #3a69cf);
         }
 
         .button-container button:nth-child(2) {
-            background: linear-gradient(135deg, #ffa3a8, #ff4970); /* Gradient color 2 */
+            background: linear-gradient(135deg, #092869, #3a69cf);
         }
 
         button:hover {
@@ -82,14 +93,33 @@
             padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
-            font-size: 16px;
+            font-size: 1.1em;
         }
 
         th {
             background-color: #f8f8f8;
         }
 
-        /* Responsive design */
+        .price-boxes {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .price-box {
+            flex: 1;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            margin-left: 10px;
+        }
+
+        .price-box:first-child {
+            margin-left: 0;
+        }
+
         @media (max-width: 600px) {
             .container {
                 margin: 10px;
@@ -97,49 +127,71 @@
             }
 
             select, input[type="number"], button {
-                font-size: 14px;
+                font-size: 1em;
                 padding: 8px;
             }
 
             th, td {
-                font-size: 14px;
+                font-size: 1em;
                 padding: 8px;
+            }
+
+            .price-boxes {
+                flex-direction: column;
+            }
+
+            .price-box {
+                margin-bottom: 10px;
+            }
+
+            .price-box:last-child {
+                margin-bottom: 0;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Medical Financial Transactions</h1>
+        <h1>المعاملات المالية الطبية</h1>
         <form id="transactionForm">
-            <label for="itemType">Item Type:</label>
+            <label for="itemType">نوع المنتج</label>
             <select id="itemType">
-                <option value="cotton" data-price="1.50">Cotton</option>
-                <option value="masks" data-price="0.50">Masks</option>
-                <option value="gloves" data-price="0.75">Gloves</option>
-                <!-- Add more items as needed -->
+                <option value="cotton" data-price="1.50">قطن</option>
+                <option value="masks" data-price="0.50">كمامة</option>
+                <option value="gloves" data-price="0.75">قفازات</option>
             </select>
 
-            <label for="quantity">Quantity:</label>
+            <label for="quantity">الكمية:</label>
             <input type="number" id="quantity" min="1" required>
 
             <div class="button-container">
-                <button type="button" onclick="addTransaction()">Submit</button>
+                <button type="button" onclick="addTransaction()">حساب</button>
             </div>
         </form>
 
         <table id="transactionTable">
             <thead>
                 <tr>
-                    <th>Item Type</th>
-                    <th>Quantity</th>
-                    <th>Total Cost</th>
+                    <th>نوع المنتج</th>
+                    <th>الكمية</th>
+                    <th>السعر الكلى</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Existing or dynamically added rows will go here -->
             </tbody>
         </table>
+
+        <div class="price-boxes">
+            <div class="price-box" id="cotton-price">
+                <p>سعر القطن: 1.50 جنيه</p>
+            </div>
+            <div class="price-box" id="masks-price">
+                <p>سعر الكمامة: 0.50 جنيه</p>
+            </div>
+            <div class="price-box" id="gloves-price">
+                <p>سعر القفازات: 0.75 جنيه</p>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -158,7 +210,7 @@
             const cell2 = newRow.insertCell(1);
             const cell3 = newRow.insertCell(2);
 
-            cell1.textContent = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+            cell1.textContent = selectedItem.textContent;
             cell2.textContent = quantity;
             cell3.textContent = totalCost.toFixed(2);
 
