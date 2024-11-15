@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliC Tasks Timer</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+            color: #333;
+            display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+        }
+
+
+
+
+        
+
+        header {
+            text-align: center;
+            background-color: #8a0000;
+            color: white;
+            padding: 1px 20px; /* Reduced padding */
+            margin: 0; /* Ensure there's no margin around the header */
+            }
+
+        main {
+            flex: 1; /* This will push the footer to the bottom if content is small */
+        }
+
+        .timer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .timer-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+        .controls button,
+        .controls input {
+            margin: 5px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .controls button {
+            background-color: #3d0303;
+            color: white;
+        }
+
+        .controls button:hover {
+            background-color: #000000;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 5px;
+            margin-top: 15px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            background: #be0101;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background: #000000;
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IntelliC Tasks Timer</h1>
+        <p>Optimize Your Workflow with Precision Timing</p>
+    </header>
+
+    <main>
+        <div class="timer-container">
+            <!-- Example timer block -->
+            <div class="timer-card">
+                <h2>The Whole Team</h2>
+                <p>Task: Finishing all the previous tasks</p>
+                <div class="timer">
+                    <span id="time-john">00:00:00</span>
+                </div>
+                <div class="controls">
+                    <label for="date-time-john">Set Date & Time:</label>
+                    <input type="datetime-local" id="date-time-john">
+                    <button onclick="startCountdown('time-john', 'date-time-john')">Start Countdown</button>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-john" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main>
+        <div>
+            <!-- Example timer block -->
+            <div>
+                <p>                </p>
+                <p>                </p>
+                <p>                </p>
+            </div>   
+            <div>
+                <p>                </p>
+            </div>   
+            <div>
+                <p>                </p>
+            </div>   
+        </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 IntelliC Team | Driving Industry 4.0 Innovation</p>
+    </footer>
+
+    <script>
+        let countdownIntervals = {}; // Store interval IDs for timers
+
+        function startCountdown(timerId, inputId) {
+            const timerElement = document.getElementById(timerId);
+            const dateInput = document.getElementById(inputId).value;
+
+            if (!dateInput) {
+                alert("Please select a valid date and time!");
+                return;
+            }
+
+            const targetTime = new Date(dateInput).getTime();
+            const currentTime = Date.now();
+
+            if (targetTime <= currentTime) {
+                alert("Selected time must be in the future!");
+                return;
+            }
+
+            clearInterval(countdownIntervals[timerId]); // Clear existing intervals
+
+            countdownIntervals[timerId] = setInterval(() => {
+                const now = Date.now();
+                const timeLeft = targetTime - now;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownIntervals[timerId]);
+                    timerElement.textContent = "00:00:00";
+                    alert("Time is up!");
+                    return;
+                }
+
+                const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                timerElement.textContent = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+                // Update progress bar
+                updateProgress(timerId, timeLeft, targetTime - currentTime);
+            }, 1000);
+        }
+
+        function updateProgress(timerId, timeLeft, totalTime) {
+            const progressElement = document.getElementById(`progress-${timerId.split('-')[1]}`);
+            const percentage = (timeLeft / totalTime) * 100;
+            progressElement.style.width = `${percentage}%`;
+        }
+    </script>
+</body>
+</html>
